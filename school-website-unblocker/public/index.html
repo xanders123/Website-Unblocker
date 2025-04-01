@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Website Unblocker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        .result a {
+            color: #3498db;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .result a:hover {
+            text-decoration: underline;
+        }
+        .instructions {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-left: 4px solid #3498db;
+            background-color: #f0f7fb;
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            display: none;
+        }
+        .iframe-container {
+            margin-top: 2rem;
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background-color: #f4f4f4;
+            margin-right: 0.5rem;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab.active {
+            background-color: #fff;
+            border-bottom: 1px solid #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>School Website Unblocker</h1>
+        
+        <div class="form-group">
+            <label for="url-input">Enter the blocked website URL:</label>
+            <input type="text" id="url-input" placeholder="e.g., example.com or https://example.com">
+            <div class="error" id="error-message">Please enter a valid URL</div>
+        </div>
+        
+        <button id="unblock-btn">Unblock Website</button>
+        
+        <div class="loading" id="loading">
+            <p>Processing your request...</p>
+        </div>
+        
+        <div class="tabs" id="tabs">
+            <div class="tab active" data-tab="link">Link Mode</div>
+            <div class="tab" data-tab="iframe">Embedded Mode</div>
+        </div>
+        
+        <div class="result" id="result">
+            <p>Unblocked website link:</p>
+            <a href="#" id="proxy-link" target="_blank"></a>
+        </div>
+        
+        <div class="iframe-container" id="iframe-container">
+            <iframe id="proxy-iframe" src="about:blank"></iframe>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Enter the URL of the blocked website (with or without http/https)</li>
+                <li>Click "Unblock Website"</li>
+                <li>Choose your preferred viewing mode:
+                    <ul>
+                        <li><strong>Link Mode:</strong> Opens the unblocked website in a new tab</li>
+                        <li><strong>Embedded Mode:</strong> Shows the website directly on this page</li>
+                    </ul>
+                </li>
+                <li>Access your content without restrictions!</li>
+            </ol>
+            <p><strong>Note:</strong> Some websites may not work perfectly due to their security settings.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlInput = document.getElementById('url-input');
+            const unblockBtn = document.getElementById('unblock-btn');
+            const resultDiv = document.getElementById('result');
+            const proxyLink = document.getElementById('proxy-link');
+            const errorMessage = document.getElementById('error-message');
+            const loading = document.getElementById('loading');
+            const iframeContainer = document.getElementById('iframe-container');
+            const proxyIframe = document.getElementById('proxy-iframe');
+            const tabs = document.querySelectorAll('.tab');
+            let activeTab = 'link';
+
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    activeTab = this.getAttribute('data-tab');
+                    
+                    if (activeTab === 'link') {
+                        resultDiv.style.display = proxyLink.href !== '#' ? 'block' : 'none';
+                        iframeContainer.style.display = 'none';
+                    } else {
+                        resultDiv.style.display = 'none';
+                        iframeContainer.style.display = proxyIframe.src !== 'about:blank' ? 'block' : 'none';
+                    }
+                });
+            });
+
+            unblockBtn.addEventListener('click', function() {
+                const url = urlInput.value.trim();
+                
+                if (!url) {
+                    errorMessage.textContent = 'Please enter a URL';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+                
+                // Simple URL validation
+                if (!isValidUrl(url)) {
+                    errorMessage.textContent = 'Please enter a valid URL';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+                
+                errorMessage.style.display = 'none';
+                loading.style.display = 'block';
+                resultDiv.style.display = 'none';
+                iframeContainer.style.display = 'none';
+                
+                // Clean the URL (remove protocol if present)
+                let cleanUrl = url;
+                if (cleanUrl.startsWith('http://')) {
+                    cleanUrl = cleanUrl.substring(7);
+                } else if (cleanUrl.startsWith('https://')) {
+                    cleanUrl = cleanUrl.substring(8);
+                }
+                
+                // Create the proxy URL
+                const proxyUrl = `/proxy/${cleanUrl}`;
+                
+                // Update the link
+                proxyLink.href = proxyUrl;
+                proxyLink.textContent = proxyUrl;
+                
+                // Update the iframe if in iframe mode
+                proxyIframe.src = proxyUrl;
+                
+                // Show the appropriate result based on active tab
+                loading.style.display = 'none';
+                if (activeTab === 'link') {
+                    resultDiv.style.display = 'block';
+                } else {
+                    iframeContainer.style.display = 'block';
+                }
+            });
+            
+            function isValidUrl(string) {
+                // Simple URL validation
+                const pattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w.-]*)*\/?$/;
+                return pattern.test(string);
+            }
+        });
+    </script>
+</body>
+</html>
